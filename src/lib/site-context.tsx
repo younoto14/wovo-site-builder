@@ -123,17 +123,11 @@ export function SiteProvider({ children }: { children: ReactNode }) {
     else sessionStorage.removeItem("wovo_admin");
   }, []);
 
-  const t = useCallback(
-    (key: string) => draft[key] ?? overrides[key] ?? translate(lang, `${key}__${lang}`) ?? "",
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [draft, overrides, lang],
-  );
-
   // Resolution order: admin draft -> committed override -> translation table.
   const resolve = useCallback(
     (key: string) => {
-      if (draft[key] !== undefined) return draft[key];
       const langKey = `${key}@${lang}`;
+      if (draft[langKey] !== undefined) return draft[langKey];
       if (overrides[langKey] !== undefined) return overrides[langKey];
       if (overrides[key] !== undefined) return overrides[key];
       return translate(lang, key);
